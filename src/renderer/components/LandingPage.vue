@@ -34,7 +34,8 @@
       </el-main>
 
       <el-footer>
-        <el-tag type="success">提示：手机与电脑要在一个路由器下的无线网；上传无法使用时，查看3000端口是否被占用</el-tag>
+        <el-tag type="success">提示：手机与电脑要在一个路由器下的无线网；上传无法使用时，查看3000端口是否被占用</el-tag><br />
+        <el-tag type="warning">分享的文件均存放在本地，绝不会存在任何隐私操作！</el-tag>
       </el-footer>
     </el-container>
 
@@ -53,7 +54,7 @@
       </div>
     </el-dialog>
 
-    <div id="last-footer">陆二零网络科技公司</div>
+    <!-- <div id="last-footer">陆二零网络科技公司</div> -->
   </div>
 </template>
 
@@ -86,11 +87,13 @@ export default {
       }
       let filename = res.filename;
       let filepath = res.filepath;
+      //生成下载地址和二维码图片地址
       this.urlList = generateShareUrl(filepath, filename);
       this.isCopyShareUrl = false;
       this.qrCodeVisible = true;
       this.$message({ type: "success", message: "上传成功" });
     },
+    //复制url操作
     copyUrl(copyUrl) {
       const result = copyClickBoard(copyUrl);
       if (result) {

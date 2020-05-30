@@ -2,24 +2,38 @@ import fs from 'fs'
 import os from 'os'
 import electron from 'electron'
 
+/**
+ * 文件遍历方法
+ * @param filePath 需要遍历的文件路径
+ */
 export const getLocalFileList = () => {
+    debugger;
     const filePath = os.homedir() + "/fileup/localfile";
-    let fileNameArr = []
-    fs.readdir(filePath, function (err, files) {
+    //根据文件路径读取文件，返回文件列表
+    fs.readdirSync(filePath, function (err, files) {
+        let fileNameArr = []
         if (err) {
             return fileNameArr
         } else {
+            //遍历读取到的文件列表
             files.forEach(function (filename) {
                 let fileObj = {};
                 fileObj.filename = filename
                 fileObj.originName = filename.replace(/\d+\!\=\=\!/, "")
+                //获取当前文件的绝对路径
                 fileNameArr.push(fileObj)
+                
+                // var filedir = path.join(filePath, filename);
             });
+            console.log(JSON.stringify(fileNameArr))
+            return fileNameArr
         }
     });
-    return fileNameArr
+    console.log(filePath)
 }
 
+
+//获取本机ip
 export const getLocalIp = () => {
     var iptable = [], ifaces = os.networkInterfaces();
 
@@ -36,6 +50,7 @@ export const getLocalIp = () => {
     return iptable
 }
 
+//复制copyUrl这个参数进入剪贴板
 export const copyClickBoard = (copyUrl) => {
     debugger;
     if (!copyUrl) {
@@ -76,13 +91,10 @@ export const deleteFileByFileName = (filename) => {
         return false;
     }
     const filePath = os.homedir() + "/fileup/localfile/" + filename
-    fs.unlink(filePath, function (err) {
-        if (err) {
-            console.log("An error ocurred updating the file" + err.message)
-            return false;
-        }
-        console.log("File succesfully deleted")
+    try {
+        fs.unlinkSync(filePath)    
         return true;
-    })
-    return true;
-} 
+    } catch (error) {
+        return false
+    }
+}

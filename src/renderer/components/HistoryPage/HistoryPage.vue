@@ -48,13 +48,15 @@
       </div>
     </el-dialog>
 
-    <div id="last-footer">陆二零网络科技公司</div>
+    <!-- <div id="last-footer">陆二零网络科技公司</div> -->
   </div>
 </template>
 
 <script>
 const { shell } = require("electron");
 const os = require("os");
+const fs = require("fs");
+
 import {
   fileDisplay,
   getLocalIp,
@@ -82,10 +84,24 @@ export default {
   },
   methods: {
     getFileListData() {
-      this.fileListData = getLocalFileList();
-      if (!this.fileListData) {
-        this.fileListData = [];
+      const filePath = os.homedir() + "/fileup/localfile";
+      //根据文件路径读取文件，返回文件列表
+      let fileNameList = [];
+      let result = fs.readdirSync(filePath);
+
+      if (result && result.length > 0) {
+        for (var i = 0; i < result.length; i++) {
+          let filename = result[i]
+          let fileObj = {};
+          fileObj.filename = filename;
+          fileObj.originName = filename.replace(/\d+\!\=\=\!/, "");
+
+          fileNameList.push(fileObj)
+        }
       }
+      this.fileListData = fileNameList;
+      // this.fileListData = fileNameList;
+      console.log("fileNameList = > " + JSON.stringify(result));
     },
     route(routeUrl) {
       this.$router.push({ path: routeUrl });
@@ -107,9 +123,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          debugger;
           if (deleteFileByFileName(scopeRow.filename)) {
-            debugger;
             this.getFileListData();
           }
         })
@@ -120,6 +134,7 @@ export default {
           });
         });
     },
+    //复制url操作
     copyUrl(copyUrl) {
       const result = copyClickBoard(copyUrl);
       if (result) {
